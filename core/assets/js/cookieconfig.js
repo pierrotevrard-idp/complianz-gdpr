@@ -1,5 +1,12 @@
 'use strict';
 
+
+/**
+ * consent management plugin sets cookie when consent category value changes
+ *
+ */
+// wp_set_consent('marketing', 'allow');
+
 /*
 * Opt in (e.g. EU):
 * default all scripts disabled.
@@ -476,8 +483,17 @@ jQuery(document).ready(function($) {
 
         complianz = cmplzMergeObject(complianz, cmplz_user_data);
         setBlockedContentContainer();
-        //uk has it's own use_category setting
 
+        /**
+         * Integration with WordPress, tell what kind of consenttype we're using, then fire an event
+         */
+
+        window.wp_consent_type = complianz.consenttype;
+        $.event.trigger({
+            type: "wp_consent_type_defined"
+        });
+
+        //uk has it's own use_category setting
         if (complianz.consenttype === 'optinstats') {
             complianz.use_categories = complianz.use_categories_optinstats;
             //use the optin mechanisms
@@ -778,6 +794,8 @@ jQuery(document).ready(function($) {
             }
         }
 
+        if (complianz.consenttype!=='optinstats') wp_set_consent('statistics_anonymous', 'allow');
+
         //save the categories
 
         //using TM categories
@@ -785,8 +803,11 @@ jQuery(document).ready(function($) {
             for (var i = 0; i < complianz.cat_num; i++) {
                 if ($('#cmplz_' + i).is(":checked")) {
                     cmplzSetCookie('cmplz_event_' + i, 'allow', complianz.cookie_expiry);
+                    wp_set_consent('cmplz_event_' + i, 'allow');
                 } else {
                     cmplzSetCookie('cmplz_event_' + i, 'deny', complianz.cookie_expiry);
+                    wp_set_consent('cmplz_event_' + i, 'deny');
+
                 }
             }
         }
@@ -795,8 +816,12 @@ jQuery(document).ready(function($) {
         if ($('#cmplz_stats').length) {
             if ($('#cmplz_stats').is(":checked")) {
                 cmplzSetCookie('cmplz_stats', 'allow', complianz.cookie_expiry);
+                wp_set_consent('statistics', 'allow');
+                wp_set_consent('statistics_anonymous', 'allow');
             } else {
                 cmplzSetCookie('cmplz_stats', 'deny', complianz.cookie_expiry);
+                wp_set_consent('statistics', 'deny');
+                if (complianz.consenttype==='optinstats') wp_set_consent('statistics_anonymous', 'deny');
             }
         }
 
@@ -804,8 +829,11 @@ jQuery(document).ready(function($) {
         if ($('#cmplz_all').length) {
             if ($('#cmplz_all').is(":checked")) {
                 cmplzSetCookie('cmplz_all', 'allow', complianz.cookie_expiry);
+                wp_set_consent('marketing', 'allow');
+
             } else {
                 cmplzSetCookie('cmplz_all', 'deny', complianz.cookie_expiry);
+                wp_set_consent('marketing', 'deny');
             }
         }
 
@@ -1016,6 +1044,8 @@ jQuery(document).ready(function($) {
     function cmplzFireCategories(all) {
         all = typeof all !== 'undefined' ? all : false;
         //always functional
+        wp_set_consent('functional', 'allow');
+        if (complianz.consenttype!=='optinstats') wp_set_consent('statistics_anonymous', 'allow');
         cmplzRunTmEvent('cmplz_event_functional');
 
         //using TM categories
@@ -1026,11 +1056,14 @@ jQuery(document).ready(function($) {
                 }
             }
         }else if (all || ($('#cmplz_stats').length && $('#cmplz_stats').is(":checked"))) {
+            wp_set_consent('statistics', 'allow');
+            wp_set_consent('statistics_anonymous', 'allow');
             complianz_enable_stats();
         }
 
         //marketing cookies acceptance
         if (all || ($('#cmplz_all').length && $('#cmplz_all').is(":checked")) ) {
+            wp_set_consent('marketing', 'allow');
             cmplzRunTmEvent('cmplz_event_all');
             complianz_enable_cookies();
             complianz_enable_scripts();
@@ -1159,6 +1192,8 @@ jQuery(document).ready(function($) {
                 }
             }
         );
+        wp_set_consent('marketing', 'deny');
+        wp_set_consent('statistics', 'deny');
 
         //we run it after the deletion of cookies, as there are cookies to be set.
         cmplzIntegrationsRevoke();

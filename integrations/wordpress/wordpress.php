@@ -1,6 +1,15 @@
 <?php
 defined('ABSPATH') or die("you do not have acces to this page!");
 /**
+ * Tell plugins to wait for the consenttype to be set
+ */
+add_filter('wp_consent_api_waitfor_consent_hook', 'cmplz_wordpress_waitfor_consenttype');
+function cmplz_wordpress_waitfor_consenttype($waitfor){
+	if (cmplz_geoip_enabled()) $waitfor = true;
+	return $waitfor;
+}
+
+/**
  * If disabled in the wizard, the consent checkbox is disabled, and personal data is not stored.
  */
 
@@ -37,3 +46,31 @@ function cmplz_wordpress_comment_form_hide_cookies_consent( $fields ) {
     unset( $fields['cookies'] );
     return $fields;
 }
+
+
+/**
+ * Consent API
+ */
+function cmplz_consent_api_add_consent_types($consenttypes){
+	$consenttypes = cmplz_get_used_consenttypes();
+	return $consenttypes;
+}
+add_filter('wp_consent_types', 'cmplz_consent_api_add_consent_types');
+
+
+function cmplz_consent_api_set_cookie_expiry($expiry){
+	$expiry = cmplz_get_value('cookie_expiry');
+	return $expiry;
+}
+add_filter('wp_consent_types', 'wp_consent_api_cookie_expiration');
+
+
+
+function cmplz_consent_api_get_consenttype($consenttype){
+	$consenttype = COMPLIANZ()->company->get_default_consenttype();
+	return $consenttype;
+}
+add_filter('wp_get_consent_type', 'cmplz_consent_api_get_consenttype');
+
+
+
