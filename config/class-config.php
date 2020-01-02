@@ -174,7 +174,7 @@ if (!class_exists("cmplz_config")) {
         public $social_media_markers = array(
             "linkedin" => array("platform.linkedin.com", 'addthis_widget.js'),
             "twitter" => array('super-socializer', 'sumoSiteId', 'addthis_widget.js', "platform.twitter.com", 'twitter-widgets.js'),
-            "facebook" => array('super-socializer', 'sumoSiteId', 'addthis_widget.js', "fb-root", "<!-- Facebook Pixel Code -->", 'connect.facebook.net', 'www.facebook.com/plugins', 'pixel-caffeine'),
+            "facebook" => array('fbq','super-socializer', 'sumoSiteId', 'addthis_widget.js', "fb-root", "<!-- Facebook Pixel Code -->", 'connect.facebook.net', 'www.facebook.com/plugins', 'pixel-caffeine'),
             "pinterest" => array('super-socializer', 'assets.pinterest.com'),
             "disqus" => array('disqus.com'),
             "instagram" => array('instawidget.net/js/instawidget.js', 'cdninstagram.com', 'instagram.com'),

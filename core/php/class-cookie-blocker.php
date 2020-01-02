@@ -180,7 +180,7 @@ if ( ! class_exists( 'cmplz_cookie_blocker' ) ) {
 
             $image_tags = COMPLIANZ()->config->image_tags;
             $image_tags = apply_filters('cmplz_image_tags', $image_tags);
-            $image_pattern = '/<img.*?src=[\'|"](\X*?)[\'|"].*?>/i';
+	        $image_pattern = '/<img.*?src=[\'|"](\X*?)[\'|"].*?>/s'; //matches multiline with s operater, for FB pixel
             if (preg_match_all($image_pattern, $output, $matches, PREG_PATTERN_ORDER)) {
                 foreach($matches[1] as $key => $image_url){
                     $total_match = $matches[0][$key];
@@ -280,8 +280,8 @@ if ( ! class_exists( 'cmplz_cookie_blocker' ) ) {
                 foreach ($placeholder_markers as $type => $markers) {
                     if (!is_array($markers)) $markers = array($markers);
                     foreach ($markers as $marker) {
-                        $placeholder_pattern = '/<(section|div|blockquote|twitter-widget)[^>]*?class=[\'"]([^>]*?' . $marker . '.*?)[\'"].*?>/i';
-                        if (preg_match_all($placeholder_pattern, $output, $matches, PREG_PATTERN_ORDER)) {
+                    	$placeholder_pattern = '/<(section|div|blockquote|twitter-widget)*[^>]*class=[\'" ]*[^>]*('.$marker.')[\'" ].*?>/i';
+	                    if (preg_match_all($placeholder_pattern, $output, $matches, PREG_PATTERN_ORDER)) {
                             foreach ($matches[0] as $key => $html_match) {
                                 $el = $matches[1][$key];
                                 $placeholder = cmplz_placeholder($type, $marker);
