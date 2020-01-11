@@ -29,6 +29,7 @@ $cmplz_integrations_list= apply_filters('cmplz_integrations', array(
         'constant_or_function' => 'WPCF7_VERSION',
         'label' => 'Contact Form 7',
     ),
+
     'facebook-for-wordpress' => array(
         'constant_or_function' => 'FacebookPixelPlugin\\FacebookForWordpress',
         'label' => 'Official Facebook Pixel',
@@ -42,6 +43,11 @@ $cmplz_integrations_list= apply_filters('cmplz_integrations', array(
     'jetpack' => array(
 	    'constant_or_function' => 'JETPACK__VERSION',
 	    'label' => 'JetPack',
+    ),
+
+    'g1-gmaps' => array(
+        'constant_or_function' => 'G1_GMaps',
+        'label' => 'G1 GMAPS',
     ),
 
     'monsterinsights' => array(
